@@ -4,8 +4,6 @@
 #include "TcpIpDriverNetwork.h"
 #include "TcpIpDriverEquipment.h"
 
-#define DEBUG_C
-
 #define LITTLE_ENDIAN
 #if defined(BIG_ENDIAN) && !defined(LITTLE_ENDIAN)
  
@@ -133,6 +131,7 @@ _ProtRet TcpIpDriverFrame::Read_Async(_ProtReadCmd *pReadCmd)
 		return PR_CMD_PROCESSED;
 	}
 
+#ifndef DEBUG_NET
     //Check reply if every field is ok
     unsigned short usErrorCode = CheckReply(pReadCmd->m_CwDataType);
     if (usErrorCode != NO_ERROR)
@@ -147,6 +146,7 @@ _ProtRet TcpIpDriverFrame::Read_Async(_ProtReadCmd *pReadCmd)
         
 		return PR_CMD_PROCESSED;    
     }
+#endif
     
 	//添加大小端转换
 	switch(pReadCmd->m_CwDataType)
@@ -196,6 +196,7 @@ _ProtRet TcpIpDriverFrame::Write_Async(_ProtWriteCmd *pWriteCmd)
         return PR_CMD_PROCESSED;
     }
 
+#ifndef DEBUG_NET
     //Check reply if every field is ok
     unsigned short usErrorCode = CheckReply(pWriteCmd->m_CwDataType);
     if (usErrorCode != NO_ERROR)
@@ -209,6 +210,7 @@ _ProtRet TcpIpDriverFrame::Write_Async(_ProtWriteCmd *pWriteCmd)
         pWriteCmd->Nack(&Error);
         return PR_CMD_PROCESSED;    
     }
+#endif
 
     pWriteCmd->Ack();
 
@@ -220,7 +222,7 @@ unsigned short TcpIpDriverFrame::CheckReply(CW_USHORT ucDataType)
     bool bOnError=false;
 	bool bWriteCmd = false;
     
-# ifndef DEBUG_C
+#ifndef DEBUG_C
 	if ((m_ucReply[6]!= m_ucRequest[6])		/*Not same device_ID*/
 		|| (m_ucReply[7]!= m_ucRequest[7])	/*Not same function code */
 		|| (m_ucReply[0]!= m_ucRequest[0])	/*Not same send ID_1 */

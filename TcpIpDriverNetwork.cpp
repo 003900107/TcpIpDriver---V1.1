@@ -183,7 +183,7 @@ bool CipNetwork::OnReceive(CConnectionContext &ConnectionContext, char *pcReceiv
             if(iID == lIDEq)
             {
 				Sleep(pEq->m_usStartDelay);		//启动延时
-				CWTRACE(PUS_PROTOC1, LVL_BIT2, "@@@@@@@ 设备接入ID：%d", iID);
+				CWTRACE(PUS_PROTOC1, LVL_BIT2, "@@@@@@@ 设备接入ID：%d，handle:%X", iID, ConnectionContext);
 
 				ConnectionContext.m_usDeviceId = iID;
                 pEq->setConnectionContext(&ConnectionContext);
