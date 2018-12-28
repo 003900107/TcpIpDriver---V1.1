@@ -1,8 +1,8 @@
-﻿生成启动时间为 2018-11-15 11:32:52。
+﻿生成启动时间为 2018-11-14 16:44:41。
      1>项目“D:\ARC Informatique\PcVue 11.2\Development kits\Protocol Toolkit\Samples\TcpIpDriver - V1.1\TcpIpDriver.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\..\Include /Zi /nologo /W3 /WX /Od /Oy- /D WIN32 /D _WINDOWS /D _USRDLL /D NDEBUG /D _WINDLL /D _MBCS /D _AFXDLL /Gm- /EHsc /RTC1 /MD /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\Obj\cwpTcpIpDriver.pch" /Fo"Release\Obj\\" /Fd"Release\Obj\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt TcpIpDriverFrame.cpp
-         TcpIpDriverFrame.cpp
+         D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\..\Include /Zi /nologo /W3 /WX /Od /Oy- /D WIN32 /D _WINDOWS /D _USRDLL /D NDEBUG /D _WINDLL /D _MBCS /D _AFXDLL /Gm- /EHsc /RTC1 /MD /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Release\Obj\cwpTcpIpDriver.pch" /Fo"Release\Obj\\" /Fd"Release\Obj\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt TcpIpDriverEquipment.cpp
+         TcpIpDriverEquipment.cpp
        Link:
          D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\ARC Informatique\PcVue 11.2\Bin\cwpTcpIpDriver.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:..\..\Lib cw32.lib /DEF:".\TcpIpDriver.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"D:\ARC Informatique\PcVue 11.2\Bin\cwpTcpIpDriver.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Release\Obj\cwpTcpIpDriver.lib" /MACHINE:X86 /SAFESEH /DLL Release\Obj\TcpIpDriver.res
          Release\Obj\IpServer.obj
@@ -17,4 +17,4 @@
 
 生成成功。
 
-已用时间 00:00:00.62
+已用时间 00:00:01.06
