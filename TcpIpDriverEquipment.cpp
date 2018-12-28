@@ -169,7 +169,7 @@ int TcpIpDriverEquipment::SendRcvFrame(
 			CloseConnectionContext();
 			m_iCountCommErrors = 0;
 
-			CWTRACE(PUS_PROTOC1, LVL_BIT4, "@@@@@@@ 发送错误次数超限，中断连接");
+			CWTRACE(PUS_PROTOC1, LVL_BIT4, "@@@@@@@ 发送错误次数超限，中断连接 handle:%X", m_pConnectionContext);
 
 			//return CW_ERR_CMD_NOT_PROCESSED;
 			return CW_ERR_EQT_STOPPED;
@@ -185,7 +185,7 @@ int TcpIpDriverEquipment::SendRcvFrame(
         int iTimeout = m_usDelay;	//毫秒
         setsockopt(m_pConnectionContext->m_socketConnection,SOL_SOCKET,SO_RCVTIMEO,(char *)&iTimeout,sizeof(int));
         int iReceiveResult = recv(m_pConnectionContext->m_socketConnection, m_pConnectionContext->m_pcBuffer, MAX_SIZE_BUFFER, 0);
-            
+#ifndef DEBUG_NET           
         //if(m_pConnectionContext==NULL)
         //    return CW_ERR_CMD_NOT_PROCESSED;
 
@@ -224,38 +224,53 @@ int TcpIpDriverEquipment::SendRcvFrame(
 				m_iCountCommErrors = 0;
 			}
 			else
-			{
+			{   //长度出错
 				CWTRACE(PUS_PROTOC1, LVL_BIT4, 
 					"@@@@@@@ Response length error:ASK(%d), RESPONSE(%d), DeviceID:(%d), ServerPort:(%d)", 
 					a_usSizeofResponseBuffer, iReceiveResult, 
 					m_pConnectionContext->m_usDeviceId, m_pConnectionContext->m_usServerPortNumber);
 
+				//打印出错数据
 				//printData(a_pcBufferToSend, a_usSendBufferSize, 
 				//	(unsigned char*)&m_pConnectionContext->m_pcBuffer, iReceiveResult);
 
-				if(m_iCountCommErrors >= m_iMaxCountCommError)		//增加超時发送次数
-				{
+				/* 数据长度出错，增加清空缓冲区处理 */
+				if(m_iCountCommErrors >= m_iMaxCountCommError)	
+				{	//超过最大出错次数，关闭链接
 					CWTRACE(PUS_PROTOC1, LVL_BIT4, "@@@@@@@ 应答长度错误次数超限，中断连接");
 					CloseConnectionContext();		
 					m_iCountCommErrors = 0;
 
-					//return CW_ERR_CMD_NOT_PROCESSED;
 					return CW_ERR_EQT_STOPPED;
 				}
 				else
 				{
 					//长度出错，避免粘包引起。多接受一次，清除缓冲区数据
-					iTimeout = 500;
+					iTimeout = m_usDelay;
 					setsockopt(m_pConnectionContext->m_socketConnection,SOL_SOCKET,SO_RCVTIMEO,(char *)&iTimeout,sizeof(int));
+					
 					iReceiveResult = recv(m_pConnectionContext->m_socketConnection, m_pConnectionContext->m_pcBuffer, MAX_SIZE_BUFFER, 0);
+					if(iReceiveResult == a_usSizeofResponseBuffer)
+					{
+						EnterCriticalSection(&m_pConnectionContext->m_csConnectionState);
+						//拷贝数据段
+						memcpy((CW_LP_UCHAR)a_pucReceivedBuffer/*m_pcRcvBuffer*/, &m_pConnectionContext->m_pcBuffer, iReceiveResult/*1024*/);
+				
+						LeaveCriticalSection(&m_pConnectionContext->m_csConnectionState);
 
-					CWTRACE(PUS_PROTOC1, LVL_BIT4, "@@@@@@@ 长度出错，清除缓冲区数据 length(%d)", iReceiveResult);
-
-					m_iCountCommErrors++;
-					return CW_ERR_INVALID_POSITION_LENGTH;			//hack: 181113
+						m_iCountCommErrors = 0;
+					}
+					else
+					{
+						CWTRACE(PUS_PROTOC1, LVL_BIT4, "@@@@@@@ 长度出错，清除缓冲区数据 length(%d)", iReceiveResult);
+						m_iCountCommErrors++;
+						
+						return CW_ERR_INVALID_POSITION_LENGTH;
+					}
 				}
 			}
 		}
+#endif
 	}
 
     return CW_OK;
